@@ -1,41 +1,45 @@
-const API_BASE = localStorage.getItem('apiBase') || 'http://127.0.0.1:5000';
+const API_BASE =
+  window.location.origin + "/api";
 
-const chatMessages = document.getElementById('chatMessages');
-const chatForm = document.getElementById('chatForm');
-const messageInput = document.getElementById('messageInput');
-const suggestions = document.getElementById('suggestions');
-const themeToggle = document.getElementById('themeToggle');
+const chatMessages = document.getElementById("chatMessages");
+const chatForm = document.getElementById("chatForm");
+const messageInput = document.getElementById("messageInput");
+const suggestions = document.getElementById("suggestions");
+const themeToggle = document.getElementById("themeToggle");
 
-const sessionId = localStorage.getItem('chatSessionId') || crypto.randomUUID();
-localStorage.setItem('chatSessionId', sessionId);
+const sessionId =
+  localStorage.getItem("chatSessionId") ||
+  crypto.randomUUID();
+
+localStorage.setItem("chatSessionId", sessionId);
 
 const suggestedQuestions = [
-  'What courses are available?',
-  'What is the MCA eligibility?',
-  'Tell me about fees structure',
-  'Hostel and transport details',
-  'What placement support is available?',
-  'Contact information',
-  'Scholarship details',
-  'Important admission dates'
+  "What courses are available?",
+  "What is the MCA eligibility?",
+  "Tell me about fees structure",
+  "Hostel and transport details",
+  "What placement support is available?",
+  "Contact information",
+  "Scholarship details",
+  "Important admission dates"
 ];
 
 function nowTime() {
   return new Date().toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
+    hour: "2-digit",
+    minute: "2-digit"
   });
 }
 
 function addMessage(role, text) {
-  const bubble = document.createElement('div');
-  bubble.className = 'message ' + role;
+  const bubble = document.createElement("div");
+  bubble.className = "message " + role;
 
-  const body = document.createElement('div');
+  const body = document.createElement("div");
   body.textContent = text;
 
-  const time = document.createElement('span');
-  time.className = 'time';
+  const time = document.createElement("span");
+  time.className = "time";
   time.textContent = nowTime();
 
   bubble.append(body, time);
@@ -45,8 +49,8 @@ function addMessage(role, text) {
 }
 
 function addTyping() {
-  const bubble = document.createElement('div');
-  bubble.className = 'message bot';
+  const bubble = document.createElement("div");
+  bubble.className = "message bot";
 
   bubble.innerHTML =
     '<span class="typing"><span></span><span></span><span></span></span>';
@@ -63,69 +67,69 @@ async function sendMessage(message) {
 
   if (!clean) return;
 
-  addMessage('user', clean);
+  addMessage("user", clean);
 
-  messageInput.value = '';
+  messageInput.value = "";
 
   const typing = addTyping();
 
   try {
 
-    console.log("Sending request to:", API_BASE + "/chat");
+    const response = await fetch(API_BASE + "/chat", {
 
-    const response = await fetch(API_BASE + '/chat', {
-      method: 'POST',
+      method: "POST",
+
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
+
       body: JSON.stringify({
         message: clean,
         session_id: sessionId
       })
+
     });
 
-    console.log("Status:", response.status);
-
     const data = await response.json();
-
-    console.log("Response:", data);
 
     typing.remove();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Server Error');
+      throw new Error(data.message || "Server Error");
     }
 
-    addMessage('bot', data.data.reply);
+    addMessage("bot", data.data.reply);
 
-  } catch (error) {
+  } catch (err) {
 
     typing.remove();
 
-    console.error("Fetch Error:", error);
-
     addMessage(
-      'bot',
-      '❌ Error: ' + error.message
+      "bot",
+      "❌ " + err.message
     );
+
+    console.error(err);
+
   }
+
 }
 
 suggestedQuestions.forEach((question) => {
 
-  const button = document.createElement('button');
+  const btn = document.createElement("button");
 
-  button.type = 'button';
+  btn.type = "button";
 
-  button.textContent = question;
+  btn.textContent = question;
 
-  button.onclick = () => sendMessage(question);
+  btn.onclick = () => sendMessage(question);
 
-  suggestions.appendChild(button);
+  suggestions.appendChild(btn);
 
 });
 
-chatForm.addEventListener('submit', function (e) {
+chatForm.addEventListener("submit", (e) => {
 
   e.preventDefault();
 
@@ -133,9 +137,9 @@ chatForm.addEventListener('submit', function (e) {
 
 });
 
-messageInput.addEventListener('keydown', function (e) {
+messageInput.addEventListener("keydown", (e) => {
 
-  if (e.key === 'Enter' && !e.shiftKey) {
+  if (e.key === "Enter" && !e.shiftKey) {
 
     e.preventDefault();
 
@@ -145,23 +149,23 @@ messageInput.addEventListener('keydown', function (e) {
 
 });
 
-themeToggle.addEventListener('click', () => {
+themeToggle.addEventListener("click", () => {
 
   const theme =
-    document.documentElement.dataset.theme === 'dark'
-      ? 'light'
-      : 'dark';
+    document.documentElement.dataset.theme === "dark"
+      ? "light"
+      : "dark";
 
   document.documentElement.dataset.theme = theme;
 
-  localStorage.setItem('theme', theme);
+  localStorage.setItem("theme", theme);
 
 });
 
 document.documentElement.dataset.theme =
-  localStorage.getItem('theme') || 'light';
+  localStorage.getItem("theme") || "light";
 
 addMessage(
-  'bot',
-  'Welcome. Ask me about KVCET courses, fees, admission, hostel, transport, placements, scholarships, faculty or contact details.'
+  "bot",
+  "Welcome. Ask me about KVCET courses, fees, admission, hostel, transport, placements, scholarships, faculty or contact details."
 );
