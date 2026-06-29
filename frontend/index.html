@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered College Enquiry Chatbot</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="chat-layout">
+    <aside class="info-panel glass">
+      <div class="brand-mark">AI</div>
+      <h1>AI-Powered College Enquiry Chatbot</h1>
+      <p>Karpaga Vinayaga College of Engineering and Technology admission helpdesk.</p>
+      <div class="stats-grid">
+        <span><strong>24x7</strong> Enquiry</span>
+        <span><strong>AI</strong> Assisted</span>
+        <span><strong>KB</strong> Verified</span>
+      </div>
+      <a class="admin-link" href="admin.html">Admin Panel</a>
+    </aside>
+
+    <section class="chat-card glass">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Admission Assistant</p>
+          <h2>KVCET Chatbot</h2>
+        </div>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark or light mode">Mode</button>
+      </header>
+
+      <div class="suggestions" id="suggestions"></div>
+      <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+      <form id="chatForm" class="composer">
+        <input id="messageInput" type="text" placeholder="Ask about MCA, fees, hostel, placement, admission..." autocomplete="off" required>
+        <button id="sendButton" type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+  <script src="js/app.js"></script>
+</body>
+</html>
