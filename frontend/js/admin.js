@@ -1,4 +1,17 @@
-const API_BASE = localStorage.getItem('apiBase') || 'http://127.0.0.1:5000';
+const API_BASE = localStorage.getItem('apiBase') || (window.location.origin + '/api');
+
+async function parseJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch (e) {
+    try {
+      const text = await response.text();
+      return { message: text || '' };
+    } catch (e2) {
+      return { message: 'Invalid JSON response' };
+    }
+  }
+}
 const resources = {
   courses: ['department_id', 'name', 'degree', 'duration', 'eligibility', 'description', 'is_active'],
   departments: ['name', 'short_name', 'description', 'level', 'is_active'],
@@ -96,7 +109,7 @@ async function loadResource(resource) {
   resourceTitle.textContent = titleCase(resource);
   renderForm();
   const response = await fetch(API_BASE + '/admin/' + resource, { headers: authHeaders() });
-  const data = await response.json();
+  const data = await parseJsonSafe(response);
   if (!response.ok) throw new Error(data.message || 'Failed to load records');
   renderRecords(data.data || []);
 }
@@ -111,7 +124,7 @@ loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const payload = { email: document.getElementById('adminEmail').value, password: document.getElementById('adminPassword').value };
   const response = await fetch(API_BASE + '/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  const data = await response.json();
+  const data = await parseJsonSafe(response);
   if (!response.ok) return alert(data.message || 'Login failed');
   token = data.data.token;
   localStorage.setItem('adminToken', token);
@@ -126,7 +139,7 @@ crudForm.addEventListener('submit', async (event) => {
   Object.keys(payload).forEach((key) => { if (payload[key] === '') delete payload[key]; });
   const url = API_BASE + '/admin/' + currentResource + (editingId ? '/' + editingId : '');
   const response = await fetch(url, { method: editingId ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(payload) });
-  const data = await response.json();
+  const data = await parseJsonSafe(response);
   if (!response.ok) return alert(data.message || 'Save failed');
   editingId = null;
   renderForm();

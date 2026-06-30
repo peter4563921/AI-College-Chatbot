@@ -1,5 +1,4 @@
-const API_BASE =
-  window.location.origin + "/api";
+const API_BASE = localStorage.getItem('apiBase') || (window.location.origin + "/api");
 
 const chatMessages = document.getElementById("chatMessages");
 const chatForm = document.getElementById("chatForm");
@@ -90,7 +89,13 @@ async function sendMessage(message) {
 
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      const text = await response.text().catch(() => '');
+      data = { message: text || 'Invalid JSON response from server' };
+    }
 
     typing.remove();
 

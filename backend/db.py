@@ -2,6 +2,9 @@ import mysql.connector
 from mysql.connector import pooling
 
 from backend.config import Config
+import logging
+
+logger = logging.getLogger(__name__)
 
 _pool = None
 
@@ -61,6 +64,7 @@ def query(sql, params=None, fetchone=False, commit=False):
     except mysql.connector.Error as e:
         # Exact error in the prompt is 1045 (Access denied). If auth fails,
         # recreating the pool ensures we are not stuck with an auth-configured pool.
+        logger.exception('MySQL error during query')
         if getattr(e, "errno", None) == 1045:
             try:
                 if connection is not None:

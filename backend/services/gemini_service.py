@@ -1,10 +1,13 @@
 import json
 import re
+import logging
 
 import google.generativeai as genai
 
 from backend.config import Config
 from backend.models.kb_model import get_public_knowledge
+
+logger = logging.getLogger(__name__)
 
 INTENT_KEYWORDS = {
     "courses": [
@@ -236,7 +239,6 @@ Question:
 """
 
     try:
-
         genai.configure(api_key=Config.GEMINI_API_KEY)
 
         model = genai.GenerativeModel(Config.GEMINI_MODEL)
@@ -261,7 +263,8 @@ Question:
             "intent": intent,
         }
 
-    except Exception:
+    except Exception as exc:
+        logger.exception('Gemini generation failed')
 
         return {
             "answer": fallback_answer(

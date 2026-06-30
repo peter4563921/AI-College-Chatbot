@@ -4,7 +4,7 @@ from backend.models.kb_model import RESOURCE_CONFIG, list_resource, create_resou
 from backend.utils.auth import make_admin_token, password_matches, admin_required
 from backend.utils.responses import ok, error
 
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.post('/login')
 def admin_login():

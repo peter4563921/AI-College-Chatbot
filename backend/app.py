@@ -4,6 +4,8 @@ from backend.config import Config
 from backend.controllers.public_controller import public_bp
 from backend.controllers.admin_controller import admin_bp
 from backend.utils.responses import ok, error
+from flask import request
+import logging
 
 import os
 import traceback
@@ -13,6 +15,10 @@ app = Flask(
     static_folder="../frontend",
     static_url_path=""
 )
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+logger = logging.getLogger(__name__)
 
 app.config.from_object(Config)
 
@@ -31,10 +37,16 @@ print("=" * 60)
 # ============================================
 # Enable CORS
 # ============================================
+# Use configured origins (comma separated) or '*' for all
+origins = Config.CORS_ORIGINS or '*'
+if isinstance(origins, str) and origins != '*':
+    origins = [o.strip() for o in origins.split(',') if o.strip()]
+
+# Only expose API endpoints to configured origins
 CORS(
     app,
-    resources={r"/*": {"origins": "*"}},
-    supports_credentials=True
+    resources={r"/api/*": {"origins": origins}},
+    supports_credentials=(origins != '*')
 )
 
 # ============================================
@@ -42,6 +54,17 @@ CORS(
 # ============================================
 app.register_blueprint(public_bp, url_prefix="/api")
 app.register_blueprint(admin_bp, url_prefix="/api/admin")
+
+
+# Log all requests
+@app.before_request
+def log_request_info():
+    logger.info('Incoming %s %s from %s', request.method, request.path, request.remote_addr)
+    logger.info('Headers: %s', dict(request.headers))
+    try:
+        logger.info('Body: %s', request.get_data(as_text=True))
+    except Exception:
+        pass
 
 # ============================================
 # Frontend Routes
