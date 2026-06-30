@@ -29,7 +29,7 @@ print("=" * 60)
 print("MYSQL_HOST     :", Config.MYSQL_HOST)
 print("MYSQL_PORT     :", Config.MYSQL_PORT)
 print("MYSQL_USER     :", Config.MYSQL_USER)
-print("MYSQL_PASSWORD :", Config.MYSQL_PASSWORD)
+print("MYSQL_PASSWORD : ********")
 print("MYSQL_DATABASE :", Config.MYSQL_DATABASE)
 print("GEMINI_MODEL   :", Config.GEMINI_MODEL)
 print("=" * 60)
@@ -161,6 +161,6 @@ def handle_exception(exc):
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
     )
