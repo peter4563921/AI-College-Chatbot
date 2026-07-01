@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000/api";
+const API_BASE = "/api";
 const chatMessages = document.getElementById("chatMessages");
 const chatForm = document.getElementById("chatForm");
 const messageInput = document.getElementById("messageInput");
