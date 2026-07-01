@@ -20,6 +20,8 @@ def _init_pool():
         password=Config.MYSQL_PASSWORD,
         database=Config.MYSQL_DATABASE,
         autocommit=False,
+        ssl_ca="ca.pem",
+        ssl_verify_cert=True,
     )
 
 
